@@ -32,10 +32,14 @@ class Services extends BaseService
 
     public static function predis(): \Predis\Client
     {
+        $config = config('Redis');
+
         return new \Predis\Client([
             'scheme' => 'tcp',
-            'host'   => 'redis',
-            'port'   => 6379,
+            'host' => $config->host,
+            'port' => $config->port,
+            'database' => $config->database,
+            'password' => $config->password,
         ]);
     }
 }
