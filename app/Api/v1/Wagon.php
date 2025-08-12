@@ -43,9 +43,9 @@ class Wagon extends BaseController
             coasterId: $coasterId
         );
 
-        $newWagon = $this->wagonRepository->create($wagonDTO->toArray());
+        $newWagon = $this->wagonRepository->create($wagonDTO);
 
-        return $this->respondCreated($newWagon);
+        return $this->respondCreated($newWagon->toArray());
     }
 
     public function destroy(int $coasterId, int $wagonId): \CodeIgniter\HTTP\ResponseInterface

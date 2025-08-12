@@ -16,8 +16,7 @@ class CoasterRepository extends Repository
             clientCount: $data['client_count'],
             routeLength: $data['route_length'],
             startAt: $data['start_at'],
-            endAt: $data['end_at'],
-            id: $data['id'],
+            endAt: $data['end_at']
         );
     }
 }
