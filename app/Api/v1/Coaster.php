@@ -11,6 +11,7 @@ use CodeIgniter\API\ResponseTrait;
 class Coaster extends BaseController
 {
     use ResponseTrait;
+
     public function __construct(
         private null|Repository $coasterRepository = null,
         private $validation = null
@@ -49,7 +50,7 @@ class Coaster extends BaseController
         return $this->respondCreated($newCoaster);
     }
 
-    public function update(int $id): \CodeIgniter\HTTP\ResponseInterface
+    public function update(int $coasterId): \CodeIgniter\HTTP\ResponseInterface
     {
         $this->validation->setRules([
             'liczba_personelu' => 'required|integer|greater_than[0]',
@@ -64,7 +65,7 @@ class Coaster extends BaseController
 
         $validated = $this->validation->getValidated();
 
-        $coasterData = $this->coasterRepository->find($id);
+        $coasterData = $this->coasterRepository->find($coasterId);
 
         $coasterDTO = new CoasterDTO(
             staffCount: $validated['liczba_personelu'],
@@ -74,7 +75,7 @@ class Coaster extends BaseController
             endAt: $validated['godziny_do']
         );
 
-        $updatedCoaster = $this->coasterRepository->update($id, $coasterDTO->toArray());
+        $updatedCoaster = $this->coasterRepository->update($coasterId, $coasterDTO->toArray());
 
         return $this->respondUpdated($updatedCoaster);
     }

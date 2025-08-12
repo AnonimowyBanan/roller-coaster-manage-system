@@ -52,9 +52,9 @@ abstract class Repository implements RepositoryInterface
         ];
     }
 
-    public function delete($id)
+    public function delete($id): bool
     {
-        // TODO: Implement delete() method.
+        return (bool) $this->predis->del("{$this->key}:{$id}");
     }
 
 }
