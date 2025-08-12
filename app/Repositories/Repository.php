@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Dto\DTO;
+use App\Interfaces\DTOInterface;
 use App\Interfaces\RepositoryInterface;
 
 abstract class Repository implements RepositoryInterface
@@ -14,6 +16,8 @@ abstract class Repository implements RepositoryInterface
     {
         $this->predis ??= service('predis');
     }
+
+    abstract protected function mapToDTO(array $data): DTO;
 
     private function getNextId(): int|string
     {
@@ -30,26 +34,24 @@ abstract class Repository implements RepositoryInterface
         return $this->predis->hgetall("{$this->key}:{$id}");
     }
 
-    public function create(array $attributes): array
+    public function create(DTOInterface $DTO): DTOInterface
     {
         $id = $this->getNextId();
 
-        $this->predis->hmset("{$this->key}:{$id}", $attributes);
+        $DTO->setId($id);
 
-        return [
-            'id' => $id,
-            ...$attributes
-        ];
+        $this->predis->hmset("{$this->key}:{$id}", $DTO->toArray());
+
+        return $DTO;
     }
 
-    public function update($id, array $attributes): array
+    public function update($id, DTOInterface $DTO): DTOInterface
     {
-        $this->predis->hmset("{$this->key}:{$id}", $attributes);
+        $DTO->setId($id);
 
-        return [
-            'id' => $id,
-            ...$attributes
-        ];
+        $this->predis->hmset("{$this->key}:{$id}", $DTO->toArray());
+
+        return $DTO;
     }
 
     public function delete($id): bool

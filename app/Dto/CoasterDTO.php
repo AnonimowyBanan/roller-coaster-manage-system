@@ -9,7 +9,7 @@ class CoasterDTO extends DTO
         public readonly int $clientCount,
         public readonly int $routeLength,
         public readonly string $startAt,
-        public readonly string $endAt,
+        public readonly string $endAt
     ) {}
 
 
@@ -17,11 +17,11 @@ class CoasterDTO extends DTO
     {
         return [
             ...(isset($this->id) ? ['id' => $this->id] : []),
-            'staff_count'  => $this->staffCount,
+            'staff_count' => $this->staffCount,
             'client_count' => $this->clientCount,
             'route_length' => $this->routeLength,
-            'start_at'     => $this->startAt,
-            'end_at'       => $this->endAt,
+            'start_at' => $this->startAt,
+            'end_at' => $this->endAt,
         ];
     }
 }

@@ -45,9 +45,9 @@ class Coaster extends BaseController
             endAt: $validated['godziny_do']
         );
 
-        $newCoaster = $this->coasterRepository->create($coasterDTO->toArray());
+        $newCoaster = $this->coasterRepository->create($coasterDTO);
 
-        return $this->respondCreated($newCoaster);
+        return $this->respondCreated($newCoaster->toArray());
     }
 
     public function update(int $coasterId): \CodeIgniter\HTTP\ResponseInterface
@@ -81,7 +81,7 @@ class Coaster extends BaseController
             endAt: $validated['godziny_do']
         );
 
-        $updatedCoaster = $this->coasterRepository->update($coasterId, $coasterDTO->toArray());
+        $updatedCoaster = $this->coasterRepository->update($coasterId, $coasterDTO);
 
         return $this->respondUpdated($updatedCoaster);
     }
