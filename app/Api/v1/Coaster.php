@@ -52,6 +52,12 @@ class Coaster extends BaseController
 
     public function update(int $coasterId): \CodeIgniter\HTTP\ResponseInterface
     {
+        $coasterData = $this->coasterRepository->find($coasterId);
+
+        if (empty($coasterData)) {
+            return $this->failNotFound('Coaster does not exist');
+        }
+
         $this->validation->setRules([
             'liczba_personelu' => 'required|integer|greater_than[0]',
             'liczba_klientow' => 'required|integer|greater_than[0]',

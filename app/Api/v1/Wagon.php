@@ -15,10 +15,12 @@ class Wagon extends BaseController
 
     public function __construct(
         private null|Repository $wagonRepository = null,
+        private null|Repository $coasterRepository = null,
         private $validation = null
     )
     {
         $this->wagonRepository ??= new WagonRepository();
+        $this->coasterRepository ??= new CoasterRepository();
         $this->validation ??= service('validation');
     }
 
@@ -48,6 +50,18 @@ class Wagon extends BaseController
 
     public function destroy(int $coasterId, int $wagonId): \CodeIgniter\HTTP\ResponseInterface
     {
+        $coasterData = $this->coasterRepository->find($coasterId);
+
+        if (empty($coasterData)) {
+            return $this->failNotFound('Coaster does not exist');
+        }
+
+        $wagonData = $this->wagonRepository->find($wagonId);
+
+        if (empty($wagonData) || $wagonData['coaster_id'] !== $coasterId) {
+            return $this->failNotFound('Wagon does not exist');
+        }
+
         if ($this->wagonRepository->delete($wagonId)) {
             return $this->respondDeleted([
                 'message' => 'Wagon deleted successfully'
