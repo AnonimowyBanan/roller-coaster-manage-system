@@ -8,10 +8,10 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 $routes->get('test', function () {
-   $coasterService = new CoasterService(1);
+   $wagonService = new \App\Services\WagonService(4);
 
     echo "<pre>";
-    print_r($coasterService->problems());
+    print_r($wagonService->toArray());
     echo "</pre>";
 });
 

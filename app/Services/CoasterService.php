@@ -5,79 +5,35 @@ namespace App\Services;
 use App\Dto\CoasterDTO;
 use App\Interfaces\DTOInterface;
 use App\Repositories\CoasterRepository;
-use App\Repositories\WagonRepository;
 use CodeIgniter\I18n\Time;
 
-class CoasterService
+class CoasterService extends ManageService
 {
-    public const STAFF_COUNT = 1;
-
-    private DTOInterface $coasterDTO;
-    private readonly CoasterRepository $coasterRepository;
-    private readonly WagonRepository $wagonRepository;
-    public array $wagons;
-    private int $wagonsInCoaster;
-    private int $currentStaff;
+    protected int $staffCount = 1;
 
     public function __construct(
-        CoasterDTO|int $coaster,
+        DTOInterface|int $coaster,
     ) {
-        $this->coasterRepository = new CoasterRepository();
-
-        if (is_numeric($coaster)) {
-            $this->coasterDTO = $this->coasterRepository->find($coaster);
-        }
-
-        $this->coasterDTO ??= $coaster;
-
-        $this->wagonRepository = new WagonRepository();
-
-        $this->wagons = $this->wagonRepository->getWagonsByCoasterId($this->coasterDTO->id);
-
-        $this->wagonsInCoaster = count($this->wagons);
-        $this->currentStaff = $this->wagonsInCoaster * WagonService::STAFF_COUNT + self::STAFF_COUNT;
+        parent::__construct($coaster, new CoasterRepository());
     }
 
-    public function data(): array
+    public function workTime(): int
     {
-        return [
-            'opening_hours' => [
-                'start' => $this->coasterDTO->startAt,
-                'end' => $this->coasterDTO->endAt,
-            ],
-            'wagons' => [
-                'max' => 0,
-                'current' => $this->wagonsInCoaster
-            ],
-            'staff' => [
-                'max' => $this->coasterDTO->staffCount,
-                'current' => $this->currentStaff,
-            ],
-            'clients' => [
-                'count' => $this->coasterDTO->clientCount,
-            ]
-        ];
+        return Time::parse($this->DTO->startAt)->difference(Time::parse($this->DTO->endAt))->getSeconds();
     }
 
-    public function info()
+    public function toArray(): array
     {
+        // TODO: Implement toArray() method.
+    }
 
+    public function info(): array
+    {
+        // TODO: Implement info() method.
     }
 
     public function problems(): array
     {
-        $problems = [];
-
-        if (Time::parse($this->coasterDTO->startAt) >= Time::parse($this->coasterDTO->endAt)) {
-            $problems['opening_hours'] = '';
-        }
-
-        if ($this->wagonsInCoaster) {
-            $problems['wagons'] = "Kolejka ma zbyt dużo przypisanych wagonów.";
-        }
-
-
-
-        return $problems;
+        // TODO: Implement problems() method.
     }
 }
