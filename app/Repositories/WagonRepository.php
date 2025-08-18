@@ -17,4 +17,18 @@ class WagonRepository extends Repository
             coasterId: $data['coaster_id'] ?? null,
         );
     }
+
+    public function getWagonsByCoasterId(?int $coasterId): array
+    {
+        $wagons = [];
+        foreach ($this->redis->keys($this->key . ':*') as $key) {
+            $wagon = $this->find((int) explode(':', $key)[1]);
+
+            if (isset($wagon->coasterId) && $wagon->coasterId === $coasterId) {
+                $wagons[$wagon->id] = $wagon;
+            }
+        }
+
+        return $wagons;
+    }
 }

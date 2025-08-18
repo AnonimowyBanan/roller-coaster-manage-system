@@ -6,7 +6,7 @@ use App\Interfaces\DTOInterface;
 
 abstract class DTO implements DTOInterface
 {
-    protected int|string $id;
+    public int|string $id;
 
     public function getId(): int|string
     {

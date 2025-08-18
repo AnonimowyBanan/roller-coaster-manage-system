@@ -11,17 +11,17 @@ abstract class Repository implements RepositoryInterface
     protected string $key;
 
     public function __construct(
-        private null|\Predis\Client $predis = null
+        protected null|\Predis\Client $redis = null
     )
     {
-        $this->predis ??= service('predis');
+        $this->redis ??= service('predis');
     }
 
     abstract protected function mapToDTO(array $data): DTO;
 
     private function getNextId(): int|string
     {
-        return $this->predis->incr("{$this->key}:id");
+        return $this->redis->incr("{$this->key}:id");
     }
 
     public function all()
@@ -29,9 +29,19 @@ abstract class Repository implements RepositoryInterface
         // TODO: Implement all() method.
     }
 
-    public function find($id): array
+    public function find($id): DTOInterface|null
     {
-        return $this->predis->hgetall("{$this->key}:{$id}");
+        $data = $this->redis->hgetall("{$this->key}:{$id}");
+
+        if (empty($data)) {
+            return null;
+        }
+
+        $dto = $this->mapToDTO($data);
+
+        $dto->setId($id);
+
+        return $dto;
     }
 
     public function create(DTOInterface $DTO): DTOInterface
@@ -40,7 +50,7 @@ abstract class Repository implements RepositoryInterface
 
         $DTO->setId($id);
 
-        $this->predis->hmset("{$this->key}:{$id}", $DTO->toArray());
+        $this->redis->hmset("{$this->key}:{$id}", $DTO->toArray());
 
         return $DTO;
     }
@@ -49,14 +59,14 @@ abstract class Repository implements RepositoryInterface
     {
         $DTO->setId($id);
 
-        $this->predis->hmset("{$this->key}:{$id}", $DTO->toArray());
+        $this->redis->hmset("{$this->key}:{$id}", $DTO->toArray());
 
         return $DTO;
     }
 
     public function delete($id): bool
     {
-        return (bool) $this->predis->del("{$this->key}:{$id}");
+        return (bool) $this->redis->del("{$this->key}:{$id}");
     }
 
 }
